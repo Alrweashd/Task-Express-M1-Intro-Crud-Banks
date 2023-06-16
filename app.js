@@ -8,6 +8,9 @@ const express = require("express");
 const app = express();
 //Allowing body
 app.use(express.json());
+//refactoring
+const accountRoutes = require("./api/accounts/accounts.routes");
+//use it
 
 //to start listening
 app.listen(PORT, () => {
@@ -15,36 +18,4 @@ app.listen(PORT, () => {
 });
 
 //get all account value
-
-app.get("/accounts", (req, res) => {
-  console.log("Giving all accounts details....");
-  return res.status(200).json(accounts);
-});
-//get by id
-app.get("/accounts/:accId", (req, res) => {
-  const { accId } = req.params;
-  let foundAccount = accounts.find((acc) => acc.id == accId);
-  if (!foundAccount) return res.status(404).json({ message: "Not found" });
-  return res.status(200).json(foundAccount);
-});
-//posting
-app.post("/accounts", (req, res) => {
-  const accId = accounts[accounts.length - 1].id + 1;
-  const value = req.body;
-  accounts.push({
-    id: accId,
-    ...value,
-    funds: 0,
-  });
-  console.log(value);
-  return res.status(201).json(accounts);
-});
-//deleting
-app.delete("/accounts/:accId", (req, res) => {
-  const { accId } = req.params;
-  if (!accounts.find((a) => a.id == accId)) {
-    return res.status(404).json({ message: "not found" });
-  }
-  accounts = accounts.filter((account) => account.id != accId);
-  return res.status(200).json(accounts);
-});
+app.use("/accounts", accountRoutes);
